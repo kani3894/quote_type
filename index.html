@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuoteType — Turn words into beautiful posters</title>
+    <meta name="description" content="Create stunning typographic posters instantly. No login required.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Serif:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <h1>🪶 QuoteType</h1>
+                <p class="tagline">Turn words into beautiful posters — instantly</p>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Left Panel: Controls -->
+            <aside class="controls-panel">
+                <div class="panel-section">
+                    <h3>Text Content</h3>
+
+                    <div class="control-group">
+                        <label for="quoteText">Quote</label>
+                        <textarea id="quoteText" rows="4" placeholder="Type your quote here...">The only way to do great work is to love what you do.</textarea>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="authorText">Author (optional)</label>
+                        <input type="text" id="authorText" placeholder="e.g., Steve Jobs" value="Steve Jobs">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="metaText">Meta (optional)</label>
+                        <input type="text" id="metaText" placeholder="e.g., 2005">
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3>Typography</h3>
+
+                    <div class="control-group">
+                        <label for="fontFamily">Font</label>
+                        <select id="fontFamily">
+                            <option value="Playfair Display">Playfair Display</option>
+                            <option value="DM Serif Display">DM Serif Display</option>
+                            <option value="Space Grotesk">Space Grotesk</option>
+                            <option value="IBM Plex Serif">IBM Plex Serif</option>
+                            <option value="Poppins">Poppins</option>
+                            <option value="Inter">Inter</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="fontWeight">Weight</label>
+                        <select id="fontWeight">
+                            <option value="300">Light</option>
+                            <option value="400">Regular</option>
+                            <option value="500">Medium</option>
+                            <option value="600">Semibold</option>
+                            <option value="700" selected>Bold</option>
+                            <option value="800">Extra Bold</option>
+                            <option value="900">Black</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="fontSize">Size: <span id="fontSizeValue">48</span>px</label>
+                        <input type="range" id="fontSize" min="24" max="120" value="48" step="2">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="lineHeight">Line Height: <span id="lineHeightValue">1.4</span></label>
+                        <input type="range" id="lineHeight" min="1.0" max="2.0" value="1.4" step="0.1">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="textAlign">Alignment</label>
+                        <select id="textAlign">
+                            <option value="left">Left</option>
+                            <option value="center" selected>Center</option>
+                            <option value="right">Right</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="padding">Padding: <span id="paddingValue">60</span>px</label>
+                        <input type="range" id="padding" min="20" max="120" value="60" step="10">
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3>Visual Style</h3>
+
+                    <div class="control-group">
+                        <label>Background Gradient</label>
+                        <div class="gradient-grid" id="gradientGrid">
+                            <button class="gradient-btn active" data-gradient="sunset">Sunset</button>
+                            <button class="gradient-btn" data-gradient="ocean">Ocean</button>
+                            <button class="gradient-btn" data-gradient="forest">Forest</button>
+                            <button class="gradient-btn" data-gradient="lavender">Lavender</button>
+                            <button class="gradient-btn" data-gradient="midnight">Midnight</button>
+                            <button class="gradient-btn" data-gradient="coral">Coral</button>
+                            <button class="gradient-btn" data-gradient="minimal">Minimal</button>
+                            <button class="gradient-btn" data-gradient="dark">Dark</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="enableShadow" checked>
+                            <span>Text Shadow</span>
+                        </label>
+                    </div>
+
+                    <div class="control-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="enableFrame">
+                            <span>Window Frame</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3>Image Size</h3>
+
+                    <div class="control-group">
+                        <select id="imageSize">
+                            <option value="1080x1350" selected>Instagram Portrait (1080×1350)</option>
+                            <option value="1080x1080">Square (1080×1080)</option>
+                            <option value="1200x630">Open Graph (1200×630)</option>
+                            <option value="1920x1080">HD (1920×1080)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="action-buttons">
+                        <button id="downloadBtn" class="btn btn-primary">📥 Download PNG</button>
+                        <button id="copyBtn" class="btn btn-secondary">📋 Copy Image</button>
+                        <button id="clearBtn" class="btn btn-tertiary">🗑️ Clear</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Panel: Preview -->
+            <main class="preview-panel">
+                <div class="preview-container">
+                    <div id="canvas" class="canvas" data-gradient="sunset">
+                        <div class="canvas-content">
+                            <div id="quoteDisplay" class="quote-text">
+                                The only way to do great work is to love what you do.
+                            </div>
+                            <div id="authorDisplay" class="author-text">
+                                Steve Jobs
+                            </div>
+                            <div id="metaDisplay" class="meta-text"></div>
+                        </div>
+                    </div>
+                    <p class="preview-label">Live Preview</p>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with ❤️ by <a href="https://github.com/kani3894" target="_blank">kani3894</a> | <a href="PRD-QuoteType.md">PRD</a></p>
+        </footer>
+    </div>
+
+    <!-- html2canvas library -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
