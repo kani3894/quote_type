@@ -11,14 +11,8 @@
   <main class="panel stage-wrap">
     <div id="stage" class="stage {{ payload.gradient }}">
       <div id="chrome" class="chrome {% if not payload.frame %}hidden{% endif %}"></div>
-      <div id="poster" class="poster" style="width:{{ payload.width }}px;height:{{ payload.height }}px;padding:{{ payload.padding }}px">
-        <div id="quote" class="{% if payload.shadow %}shadow-soft{% endif %}" style="font-family:{{ payload.font }};font-weight:{{ payload.weight }};font-size:{{ payload.size }}px;line-height:{{ payload.line_height }};text-align:{{ payload.align }};max-width:100%">"{{ payload.text }}"</div>
-        {% if payload.show_author %}
-        <div id="authorBox" class="meta">— <span id="authorOut">{{ payload.author or '' }}</span></div>
-        {% endif %}
-        {% if payload.show_meta %}
-        <div id="metaBox" class="watermark">{{ payload.meta or '' }}</div>
-        {% endif %}
+      <div id="poster" class="poster {% if payload.shadow %}shadow-soft{% endif %}" style="width:{{ payload.width }}px;height:{{ payload.height }}px;padding:{{ payload.padding }}px">
+        <img src="{{ payload.image }}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" />
       </div>
     </div>
   </main>
@@ -30,14 +24,14 @@
 </div>
 <script>
   async function makeCanvas(){
-    const node = document.getElementById('poster');
+    const node = document.getElementById('stage');
     const canvas = await html2canvas(node, {backgroundColor: null, scale: 2});
     return canvas;
   }
   document.getElementById('downloadPng').onclick = async ()=>{
     const c = await makeCanvas();
     const a = document.createElement('a');
-    a.href = c.toDataURL('image/png'); a.download = 'quotetype.png'; a.click();
+    a.href = c.toDataURL('image/png'); a.download = 'quote-poster.png'; a.click();
   }
   document.getElementById('copyPng').onclick = async ()=>{
     const c = await makeCanvas();

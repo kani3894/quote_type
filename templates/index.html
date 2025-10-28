@@ -6,56 +6,14 @@
     <h2>QuoteType — Editor</h2>
     <div class="controls">
       <label>
-        Quote text <span style="font-size: 12px; color: #666;">(Try Ctrl+V to paste screenshot)</span>
+        Paste Screenshot (Ctrl+V or Cmd+V)
       </label>
-      <textarea id="text">Turn abstract info into vivid rooms.</textarea>
-      <div class="row">
-        <div>
-          <label>Author</label>
-          <input id="author" value="Kanimozhi U." />
-        </div>
-        <div>
-          <label>Meta</label>
-          <input id="meta" value="Oct 24, 2025 · Substack" />
-        </div>
+      <div id="dropzone" style="min-height: 120px; border: 2px dashed #ccc; border-radius: 8px; padding: 20px; text-align: center; background: #f9f9f9; cursor: pointer;">
+        <p style="color: #666; margin: 0;">Paste a screenshot here from Twitter/LinkedIn</p>
+        <img id="screenshot" style="max-width: 100%; margin-top: 10px; display: none; border-radius: 8px;" />
       </div>
-      <div class="row">
-        <div>
-          <label>Font</label>
-          <select id="font">
-            <option value="Inter, sans-serif">Inter</option>
-            <option value="'Playfair Display', serif">Playfair Display</option>
-            <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-            <option value="'IBM Plex Serif', serif">IBM Plex Serif</option>
-            <option value="'DM Serif Display', serif">DM Serif Display</option>
-            <option value="Poppins, sans-serif">Poppins</option>
-          </select>
-        </div>
-        <div>
-          <label>Weight</label>
-          <select id="weight"><option>300</option><option selected>400</option><option>600</option><option>700</option><option>800</option></select>
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label>Font size <span id="sizeVal">52</span>px</label>
-          <input id="size" type="range" min="28" max="96" value="52" />
-        </div>
-        <div>
-          <label>Line height <span id="lhVal">1.2</span></label>
-          <input id="lh" type="range" min="100" max="180" value="120" />
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label>Align</label>
-          <select id="align"><option>left</option><option>center</option><option>right</option></select>
-        </div>
-        <div>
-          <label>Padding <span id="padVal">72</span>px</label>
-          <input id="padding" type="range" min="24" max="120" value="72" />
-        </div>
-      </div>
+      <label>Padding <span id="padVal">72</span>px</label>
+      <input id="padding" type="range" min="24" max="120" value="72" />
       <label>Size preset</label>
       <div class="chips">
         <button class="chip" data-size="1080x1350">IG Portrait</button>
@@ -76,17 +34,13 @@
         <label class="toggle"><input type="checkbox" id="shadow" checked/> Soft shadow</label>
         <label class="toggle"><input type="checkbox" id="frame"/> Window frame</label>
       </div>
-      <div class="row">
-        <label class="toggle"><input type="checkbox" id="showAuthor" checked/> Show author</label>
-        <label class="toggle"><input type="checkbox" id="showMeta" checked/> Show meta</label>
-      </div>
       <div class="actions">
         <button class="btn" id="downloadPng">Download PNG</button>
         <button class="btn" id="copyPng">Copy image</button>
         <button class="btn" id="savePoster">Save & get link</button>
         <button class="btn" id="clear">Clear</button>
       </div>
-      <div class="hint">Pro tip: keep quotes 8–24 words for the cleanest layout.</div>
+      <div class="hint">Paste a screenshot (Ctrl+V or Cmd+V) from Twitter, LinkedIn, or any social media.</div>
     </div>
   </aside>
 
@@ -94,9 +48,7 @@
     <div id="stage" class="stage g-ink">
       <div id="chrome" class="chrome hidden"></div>
       <div id="poster" class="poster" style="width:1080px;height:1350px">
-        <div id="quote" class="shadow-soft" style="font-family:Inter, sans-serif;font-weight:400;font-size:52px;line-height:1.2;text-align:left;max-width:100%">"Turn abstract info into vivid rooms."</div>
-        <div id="authorBox" class="meta">— <span id="authorOut">Kanimozhi U.</span></div>
-        <div id="metaBox" class="watermark">Oct 24, 2025 · Substack</div>
+        <img id="posterImage" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" />
       </div>
     </div>
   </main>

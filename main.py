@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException, UploadFile, File
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -6,15 +6,6 @@ from pydantic import BaseModel, Field
 import sqlite3, json, time
 import shortuuid
 from pathlib import Path
-import io
-
-# Optional OCR support
-try:
-    from PIL import Image
-    import pytesseract
-    OCR_AVAILABLE = True
-except ImportError:
-    OCR_AVAILABLE = False
 
 APP_DIR = Path(__file__).parent
 DB_PATH = APP_DIR / 'data.sqlite'
@@ -47,20 +38,11 @@ init_db()
 
 # ---- Schemas ----
 class PosterPayload(BaseModel):
-    text: str = Field(min_length=1, max_length=500)
-    author: str | None = None
-    meta: str | None = None
-    font: str = "Inter, sans-serif"
-    weight: str = "400"
-    size: int = 52
-    line_height: float = 1.2
-    align: str = "left"  # left | center | right
-    padding: int = 72
-    gradient: str = "g-ink"  # matches CSS class on stage container
+    image: str  # base64 data URL
+    gradient: str = "g-ink"
     shadow: bool = True
     frame: bool = False
-    show_author: bool = True
-    show_meta: bool = True
+    padding: int = 72
     width: int = 1080
     height: int = 1350
 
@@ -113,46 +95,6 @@ async def list_posters(limit: int = 12, offset: int = 0):
         "payload": json.loads(r["payload"]),
         "created_at": r["created_at"]
     } for r in rows]
-
-@app.post("/api/extract-text")
-async def extract_text_from_image(file: UploadFile = File(...)):
-    """Extract text from uploaded screenshot/image"""
-    if not OCR_AVAILABLE:
-        return {
-            "text": "",
-            "lines": [],
-            "success": False,
-            "error": "OCR not available. Please install pytesseract and Pillow."
-        }
-    
-    try:
-        # Read the image file
-        image_bytes = await file.read()
-        image = Image.open(io.BytesIO(image_bytes))
-        
-        # Convert to RGB if necessary
-        if image.mode != 'RGB':
-            image = image.convert('RGB')
-        
-        # Use OCR to extract text
-        extracted_text = pytesseract.image_to_string(image)
-        
-        # Clean up the text
-        lines = [line.strip() for line in extracted_text.split('\n') if line.strip()]
-        text = ' '.join(lines)
-        
-        return {
-            "text": text,
-            "lines": lines,
-            "success": True
-        }
-    except Exception as e:
-        return {
-            "text": "",
-            "lines": [],
-            "success": False,
-            "error": str(e)
-        }
 
 # ---- Dev runner ----
 # Run: uvicorn main:app --reload --port 8000
