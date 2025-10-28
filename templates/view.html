@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}QuoteType — Poster {{ poster_id }}{% endblock %}
+{% block body %}
+<div class="viewwrap">
+  <header class="viewbar">
+    <div>QuoteType</div>
+    <div class="spacer"></div>
+    <a class="btn" href="/">Create your own</a>
+  </header>
+
+  <main class="panel stage-wrap">
+    <div id="stage" class="stage {{ payload.gradient }}">
+      <div id="chrome" class="chrome {% if not payload.frame %}hidden{% endif %}"></div>
+      <div id="poster" class="poster" style="width:{{ payload.width }}px;height:{{ payload.height }}px;padding:{{ payload.padding }}px">
+        <div id="quote" class="{% if payload.shadow %}shadow-soft{% endif %}" style="font-family:{{ payload.font }};font-weight:{{ payload.weight }};font-size:{{ payload.size }}px;line-height:{{ payload.line_height }};text-align:{{ payload.align }};max-width:100%">"{{ payload.text }}"</div>
+        {% if payload.show_author %}
+        <div id="authorBox" class="meta">— <span id="authorOut">{{ payload.author or '' }}</span></div>
+        {% endif %}
+        {% if payload.show_meta %}
+        <div id="metaBox" class="watermark">{{ payload.meta or '' }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </main>
+
+  <div class="actions center">
+    <button class="btn" id="downloadPng">Download PNG</button>
+    <button class="btn" id="copyPng">Copy image</button>
+  </div>
+</div>
+<script>
+  async function makeCanvas(){
+    const node = document.getElementById('poster');
+    const canvas = await html2canvas(node, {backgroundColor: null, scale: 2});
+    return canvas;
+  }
+  document.getElementById('downloadPng').onclick = async ()=>{
+    const c = await makeCanvas();
+    const a = document.createElement('a');
+    a.href = c.toDataURL('image/png'); a.download = 'quotetype.png'; a.click();
+  }
+  document.getElementById('copyPng').onclick = async ()=>{
+    const c = await makeCanvas();
+    c.toBlob(async (blob)=>{
+      try{ await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]); alert('Copied to clipboard!'); }
+      catch(e){ alert('Copy blocked by browser. Download instead.'); }
+    })
+  }
+</script>
+{% endblock %}
