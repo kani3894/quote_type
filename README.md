@@ -37,22 +37,17 @@ A beautiful, full-stack web application for creating and sharing styled quote po
    cd timerapp
    ```
 
-2. **Switch to the QuoteType branch:**
-   ```bash
-   git checkout claude/build-feature-011CUYAEzzmFL4YCNvc9yXaw
-   ```
-
-3. **Install dependencies:**
+2. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Run the server:**
+3. **Run the server:**
    ```bash
    uvicorn main:app --reload --port 8000
    ```
 
-5. **Open in your browser:**
+4. **Open in your browser:**
    ```
    http://localhost:8000
    ```
