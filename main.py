@@ -6,9 +6,15 @@ from pydantic import BaseModel, Field
 import sqlite3, json, time
 import shortuuid
 from pathlib import Path
-from PIL import Image
-import pytesseract
 import io
+
+# Optional OCR support
+try:
+    from PIL import Image
+    import pytesseract
+    OCR_AVAILABLE = True
+except ImportError:
+    OCR_AVAILABLE = False
 
 APP_DIR = Path(__file__).parent
 DB_PATH = APP_DIR / 'data.sqlite'
@@ -111,6 +117,14 @@ async def list_posters(limit: int = 12, offset: int = 0):
 @app.post("/api/extract-text")
 async def extract_text_from_image(file: UploadFile = File(...)):
     """Extract text from uploaded screenshot/image"""
+    if not OCR_AVAILABLE:
+        return {
+            "text": "",
+            "lines": [],
+            "success": False,
+            "error": "OCR not available. Please install pytesseract and Pillow."
+        }
+    
     try:
         # Read the image file
         image_bytes = await file.read()

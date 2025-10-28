@@ -110,47 +110,60 @@ el.save.addEventListener('click', async ()=>{
   }catch(e){ alert('Network error'); }
 });
 
-// Upload screenshot and extract text
-const uploadBtn = document.getElementById('uploadBtn');
-const fileInput = document.getElementById('fileInput');
+// Handle paste events for screenshots
+let isProcessing = false;
 
-uploadBtn.addEventListener('click', ()=>{
-  fileInput.click();
-});
-
-fileInput.addEventListener('change', async (event)=>{
-  const file = event.target.files[0];
-  if(!file) return;
+document.addEventListener('paste', async (event)=>{
+  if(isProcessing) return;
   
-  // Show loading state
-  uploadBtn.textContent = '⏳ Processing...';
-  uploadBtn.disabled = true;
+  const items = event.clipboardData?.items;
+  if(!items) return;
   
-  try{
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    const response = await fetch('/api/extract-text', {
-      method: 'POST',
-      body: formData
-    });
-    
-    const result = await response.json();
-    
-    if(result.success && result.text){
-      el.text.value = result.text;
-      apply();
-      uploadBtn.textContent = '📷 Upload Screenshot';
-    }else{
-      alert('Failed to extract text: ' + (result.error || 'Unknown error'));
-      uploadBtn.textContent = '📷 Upload Screenshot';
+  for(let item of items){
+    if(item.type.indexOf('image') !== -1){
+      event.preventDefault();
+      isProcessing = true;
+      
+      const blob = item.getAsFile();
+      if(!blob) continue;
+      
+      // Show loading indicator
+      const statusMsg = document.createElement('div');
+      statusMsg.textContent = '⏳ Extracting text from screenshot...';
+      statusMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #667eea; color: white; padding: 12px 20px; border-radius: 8px; z-index: 9999;';
+      document.body.appendChild(statusMsg);
+      
+      try{
+        const formData = new FormData();
+        formData.append('file', blob, 'screenshot.png');
+        
+        const response = await fetch('/api/extract-text', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if(result.success && result.text){
+          el.text.value = result.text;
+          apply();
+          statusMsg.textContent = '✅ Text extracted!';
+          setTimeout(()=> statusMsg.remove(), 1000);
+        }else{
+          statusMsg.textContent = '❌ Failed to extract text';
+          statusMsg.style.background = '#ff6b6b';
+          setTimeout(()=> statusMsg.remove(), 2000);
+        }
+      }catch(error){
+        statusMsg.textContent = '❌ Error processing image';
+        statusMsg.style.background = '#ff6b6b';
+        setTimeout(()=> statusMsg.remove(), 2000);
+      }finally{
+        isProcessing = false;
+      }
+      
+      break;
     }
-  }catch(error){
-    alert('Error uploading image: ' + error.message);
-    uploadBtn.textContent = '📷 Upload Screenshot';
-  }finally{
-    uploadBtn.disabled = false;
-    fileInput.value = '';
   }
 });
 
