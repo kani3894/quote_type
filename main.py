@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, UploadFile, File
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -6,6 +6,9 @@ from pydantic import BaseModel, Field
 import sqlite3, json, time
 import shortuuid
 from pathlib import Path
+from PIL import Image
+import pytesseract
+import io
 
 APP_DIR = Path(__file__).parent
 DB_PATH = APP_DIR / 'data.sqlite'
@@ -104,6 +107,38 @@ async def list_posters(limit: int = 12, offset: int = 0):
         "payload": json.loads(r["payload"]),
         "created_at": r["created_at"]
     } for r in rows]
+
+@app.post("/api/extract-text")
+async def extract_text_from_image(file: UploadFile = File(...)):
+    """Extract text from uploaded screenshot/image"""
+    try:
+        # Read the image file
+        image_bytes = await file.read()
+        image = Image.open(io.BytesIO(image_bytes))
+        
+        # Convert to RGB if necessary
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+        
+        # Use OCR to extract text
+        extracted_text = pytesseract.image_to_string(image)
+        
+        # Clean up the text
+        lines = [line.strip() for line in extracted_text.split('\n') if line.strip()]
+        text = ' '.join(lines)
+        
+        return {
+            "text": text,
+            "lines": lines,
+            "success": True
+        }
+    except Exception as e:
+        return {
+            "text": "",
+            "lines": [],
+            "success": False,
+            "error": str(e)
+        }
 
 # ---- Dev runner ----
 # Run: uvicorn main:app --reload --port 8000

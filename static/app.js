@@ -110,4 +110,48 @@ el.save.addEventListener('click', async ()=>{
   }catch(e){ alert('Network error'); }
 });
 
+// Upload screenshot and extract text
+const uploadBtn = document.getElementById('uploadBtn');
+const fileInput = document.getElementById('fileInput');
+
+uploadBtn.addEventListener('click', ()=>{
+  fileInput.click();
+});
+
+fileInput.addEventListener('change', async (event)=>{
+  const file = event.target.files[0];
+  if(!file) return;
+  
+  // Show loading state
+  uploadBtn.textContent = '⏳ Processing...';
+  uploadBtn.disabled = true;
+  
+  try{
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await fetch('/api/extract-text', {
+      method: 'POST',
+      body: formData
+    });
+    
+    const result = await response.json();
+    
+    if(result.success && result.text){
+      el.text.value = result.text;
+      apply();
+      uploadBtn.textContent = '📷 Upload Screenshot';
+    }else{
+      alert('Failed to extract text: ' + (result.error || 'Unknown error'));
+      uploadBtn.textContent = '📷 Upload Screenshot';
+    }
+  }catch(error){
+    alert('Error uploading image: ' + error.message);
+    uploadBtn.textContent = '📷 Upload Screenshot';
+  }finally{
+    uploadBtn.disabled = false;
+    fileInput.value = '';
+  }
+});
+
 apply();
